@@ -1,9 +1,11 @@
 void here(){
 	int a;
 	a = 3;
+	bool yes;
+	yes = 3 + yes;
 	write a;
 }
 
 int fn(){
-	write here();
+	#write here();
 }

@@ -73,6 +73,10 @@ void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta){
 void ReadStmtNode::typeAnalysis(TypeAnalysis * ta){
 
 	myDst->typeAnalysis(ta);
+	auto subType = ta->nodeType(myDst);
+	if(subType->asFn()){
+		ta->errReadFn(myDst->pos());
+	}
 }
 
 void WriteStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -134,14 +138,25 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
-
 	//ta->nodeType(this, ErrorType::produce());
+	
 }
 
 void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
 
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2){
+		std::cout<<"These are not the same type\n";
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta){
