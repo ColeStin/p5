@@ -1,11 +1,14 @@
 void here(){
-	int a;
-	a = 3;
+	bool a;
 	bool yes;
-	yes = 3 + yes;
+	#yes = a + here();
 	write a;
 }
 
 int fn(){
-	#write here();
+	string a;
+	int yes;
+	if(yes != a){
+		
+	}
 }

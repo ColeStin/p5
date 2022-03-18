@@ -291,6 +291,7 @@ public:
 	PlusNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class MinusNode : public BinaryExpNode{
@@ -298,6 +299,7 @@ public:
 	MinusNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class TimesNode : public BinaryExpNode{
@@ -305,6 +307,7 @@ public:
 	TimesNode(Position * p, ExpNode * e1In, ExpNode * e2In)
 	: BinaryExpNode(p, e1In, e2In){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class DivideNode : public BinaryExpNode{
@@ -312,6 +315,7 @@ public:
 	DivideNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class AndNode : public BinaryExpNode{
@@ -319,6 +323,7 @@ public:
 	AndNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class OrNode : public BinaryExpNode{
@@ -326,6 +331,7 @@ public:
 	OrNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class EqualsNode : public BinaryExpNode{
@@ -333,6 +339,7 @@ public:
 	EqualsNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class NotEqualsNode : public BinaryExpNode{
@@ -340,6 +347,7 @@ public:
 	NotEqualsNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class LessNode : public BinaryExpNode{
@@ -347,6 +355,7 @@ public:
 	LessNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class LessEqNode : public BinaryExpNode{
@@ -354,6 +363,7 @@ public:
 	LessEqNode(Position * pos, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(pos, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class GreaterNode : public BinaryExpNode{
@@ -361,6 +371,7 @@ public:
 	GreaterNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class GreaterEqNode : public BinaryExpNode{
@@ -368,6 +379,7 @@ public:
 	GreaterEqNode(Position * p, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(p, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis *) override;
 };
 
 class UnaryExpNode : public ExpNode {

@@ -96,6 +96,7 @@ void IfStmtNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
+
 }
 
 void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -151,12 +152,234 @@ void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp2 = ta->nodeType(myExp2);
 
 	if(exp1 != exp2){
-		std::cout<<"These are not the same type\n";
+		ta->errMathOpd(myExp2->pos());
 	}else{
 		ta->nodeType(this, exp1);
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
+}
+
+void PlusNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+}
+
+void MinusNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+}
+
+void DivideNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+}
+
+void TimesNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+}
+
+void AndNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isBool()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+}
+
+void OrNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isBool()){
+		ta->errMathOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+	
+}
+
+void EqualsNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+	
+}
+
+void NotEqualsNode::typeAnalysis(TypeAnalysis * ta){
+
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+
+}
+
+void LessEqNode::typeAnalysis(TypeAnalysis * ta){
+
+	
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+
+}
+
+void LessNode::typeAnalysis(TypeAnalysis * ta){
+
+	
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+	
+}
+
+void GreaterEqNode::typeAnalysis(TypeAnalysis * ta){
+
+	
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isInt()){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+	
+}
+
+void GreaterNode::typeAnalysis(TypeAnalysis * ta){
+
+	
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+
+	auto exp1 = ta->nodeType(myExp1);
+	auto exp2 = ta->nodeType(myExp2);
+
+	if(exp1 != exp2 || !exp1->isBool()){
+		ta->errRelOpd(myExp2->pos());
+	}else{
+		ta->nodeType(this, exp1);
+		return;
+	}
+	ta->nodeType(this, ErrorType::produce());
+
+
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta){
