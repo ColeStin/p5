@@ -73,23 +73,17 @@ void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta){
 void ReadStmtNode::typeAnalysis(TypeAnalysis * ta){
 
 	myDst->typeAnalysis(ta);
-	if(typeid(ta->nodeType(myDst)) == typeid(FnDeclNode)){
-	//if(ta->nodeType(myDst) == FnDeclNode){
-    	ta->errAssignFn(myDst->pos());
-	}
 }
 
 void WriteStmtNode::typeAnalysis(TypeAnalysis * ta){
 
 	mySrc->typeAnalysis(ta);
-	/*if(ta->nodeType(mySrc) == FnDeclNode){
-    	if(mySrc->getReturnTypeNode() == VoidTypeNode){
-        	ta->errWriteVoid(mySrc->pos());
-    	}
-    	else{
-        	ta->errWriteFn(mySrc->pos());
-    	}
-	}*/
+
+	auto subType = ta->nodeType(mySrc);
+	if(subType->asError()){
+		ta->errWriteFn(mySrc->pos());
+		auto fn = subType->asFn();
+	}
 }
 
 void IfStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -140,6 +134,8 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
+
+	//ta->nodeType(this, ErrorType::produce());
 }
 
 void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
@@ -149,11 +145,13 @@ void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta){
-
+	
 	myID->typeAnalysis(ta);
 	for (auto arg : *myArgs){
 		arg->typeAnalysis(ta);
 	}
+
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void RefNode::typeAnalysis(TypeAnalysis * ta){
@@ -217,8 +215,9 @@ void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void CallStmtNode::typeAnalysis(TypeAnalysis * ta){
-	
+	//std::cout<<"callstmt\n";
 	myCallExp->typeAnalysis(ta);
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void TypeNode::typeAnalysis(TypeAnalysis * ta){

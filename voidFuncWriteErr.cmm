@@ -1,0 +1,9 @@
+void here(){
+	int a;
+	a = 3;
+	write a;
+}
+
+int fn(){
+	write here();
+}
