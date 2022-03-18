@@ -105,6 +105,14 @@ void IfStmtNode::typeAnalysis(TypeAnalysis * ta){
 		stmt->typeAnalysis(ta);
 	}
 
+	auto condition = ta->nodeType(myCond);
+	if(!condition->isBool()){
+		ta->errIfCond(myCond->pos());
+	}
+	else{
+		ta->nodeType(this, BasicType::produce(VOID));
+	}
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -116,6 +124,15 @@ void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBodyFalse){
 		stmt->typeAnalysis(ta);
 	}
+
+	auto condition = ta->nodeType(myCond);
+	if(!condition->isBool()){
+		ta->errIfCond(myCond->pos());
+	}
+	else{
+		ta->nodeType(this, BasicType::produce(VOID));
+	}
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void WhileStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -124,6 +141,15 @@ void WhileStmtNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
+
+	auto condition = ta->nodeType(myCond);
+	if(!condition->isBool()){
+		ta->errIfCond(myCond->pos());
+	}
+	else{
+		ta->nodeType(this, BasicType::produce(VOID));
+	}
+	ta->nodeType(this, ErrorType::produce());
 }
 
 void VarDeclNode::typeAnalysis(TypeAnalysis * ta){
@@ -249,7 +275,7 @@ void AndNode::typeAnalysis(TypeAnalysis * ta){
 	if(exp1 != exp2 || !exp1->isBool()){
 		ta->errMathOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -267,7 +293,7 @@ void OrNode::typeAnalysis(TypeAnalysis * ta){
 	if(exp1 != exp2 || !exp1->isBool()){
 		ta->errMathOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -283,9 +309,9 @@ void EqualsNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp2 = ta->nodeType(myExp2);
 
 	if(exp1 != exp2){
-		ta->errRelOpd(myExp2->pos());
+		ta->errEqOpr(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -302,9 +328,9 @@ void NotEqualsNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp2 = ta->nodeType(myExp2);
 
 	if(exp1 != exp2){
-		ta->errRelOpd(myExp2->pos());
+		ta->errEqOpr(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -321,10 +347,10 @@ void LessEqNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp1 = ta->nodeType(myExp1);
 	auto exp2 = ta->nodeType(myExp2);
 
-	if(exp1 != exp2 || !exp1->isInt()){
+	if(exp1 != exp2 || exp1->isString() || exp1->isVoid()){
 		ta->errRelOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -341,10 +367,10 @@ void LessNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp1 = ta->nodeType(myExp1);
 	auto exp2 = ta->nodeType(myExp2);
 
-	if(exp1 != exp2 || !exp1->isInt()){
+	if(exp1 != exp2 || exp1->isString() || exp1->isVoid()){
 		ta->errRelOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -361,10 +387,10 @@ void GreaterEqNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp1 = ta->nodeType(myExp1);
 	auto exp2 = ta->nodeType(myExp2);
 
-	if(exp1 != exp2 || !exp1->isInt()){
+	if(exp1 != exp2 || exp1->isString() || exp1->isVoid()){
 		ta->errRelOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
@@ -381,10 +407,10 @@ void GreaterNode::typeAnalysis(TypeAnalysis * ta){
 	auto exp1 = ta->nodeType(myExp1);
 	auto exp2 = ta->nodeType(myExp2);
 
-	if(exp1 != exp2 || !exp1->isBool()){
+	if(exp1 != exp2 || exp1->isString() || exp1->isVoid()){
 		ta->errRelOpd(myExp2->pos());
 	}else{
-		ta->nodeType(this, exp1);
+		ta->nodeType(this, BasicType::produce(BOOL));
 		return;
 	}
 	ta->nodeType(this, ErrorType::produce());
