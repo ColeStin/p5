@@ -72,22 +72,30 @@ void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta){
 
 void ReadStmtNode::typeAnalysis(TypeAnalysis * ta){
 
-	myDst->typeAnalysis(ta);
-	auto subType = ta->nodeType(myDst);
-	if(subType->asFn()){
-		ta->errReadFn(myDst->pos());
-	}
+    myDst->typeAnalysis(ta);
+    auto subType = ta->nodeType(myDst);
+    if (subType->asFn()){
+        ta->errReadFn(myDst->pos());
+    }
 }
 
 void WriteStmtNode::typeAnalysis(TypeAnalysis * ta){
 
-	mySrc->typeAnalysis(ta);
+    mySrc->typeAnalysis(ta);
 
-	auto subType = ta->nodeType(mySrc);
-	if(subType->asError()){
-		ta->errWriteFn(mySrc->pos());
-		auto fn = subType->asFn();
-	}
+    auto subType = ta->nodeType(mySrc);
+    if(subType->asFn()){
+        if(subType->isVoid()){
+
+            ta->errWriteVoid(mySrc->pos());
+            auto fn = subType->asFn();
+        }
+        else{
+
+            ta->errWriteFn(mySrc->pos());
+               auto fn = subType->asFn();
+        }
+    }
 }
 
 void IfStmtNode::typeAnalysis(TypeAnalysis * ta){
@@ -135,7 +143,9 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 	// the current function
 
 	//Note: this function may need extra code
-
+	for(auto formal: *myFormals){
+		formal->typeAnalysis(ta);
+	}
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
@@ -383,13 +393,29 @@ void GreaterNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta){
-	
 	myID->typeAnalysis(ta);
-	for (auto arg : *myArgs){
-		arg->typeAnalysis(ta);
-	}
+    auto subType = ta->nodeType(myID);
+    bool isFunc = true;
+    if(!subType->asFn()){
 
-	ta->nodeType(this, ErrorType::produce());
+        isFunc = false;
+        ta->errCallee(myID->pos());
+    }
+    for (auto arg : *myArgs){
+        arg->typeAnalysis(ta);
+
+        auto subTypeArg = ta->nodeType(arg);
+        if(isFunc == true){
+            /*
+            check if arg matches formal
+            if(subTypeArg->func()){
+                ta->errArgMatch(arg->pos());
+            }
+            */
+        }
+    }
+
+    ta->nodeType(this, ErrorType::produce());
 }
 
 void RefNode::typeAnalysis(TypeAnalysis * ta){
@@ -453,7 +479,6 @@ void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void CallStmtNode::typeAnalysis(TypeAnalysis * ta){
-	//std::cout<<"callstmt\n";
 	myCallExp->typeAnalysis(ta);
 	ta->nodeType(this, ErrorType::produce());
 }
