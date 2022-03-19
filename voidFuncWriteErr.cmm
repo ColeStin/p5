@@ -1,14 +1,10 @@
-void here(){
-	bool a;
-	bool yes;
-	#yes = a + here();
-	write a;
+bool func(bool yes, int second, string third){
+	bool bo;
+	return true;
 }
 
-int fn(){
-	string a;
-	int yes;
-	if(yes != a){
-		
-	}
+void hi(){
+	string four;
+	func(true, "string", "string");
+	return;
 }

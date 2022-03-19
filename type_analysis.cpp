@@ -160,7 +160,7 @@ void VarDeclNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
-
+	//std::cout<<"funciton declaration\n";
 	//HINT: you might want to change the signature for
 	// typeAnalysis on FnBodyNode to take a second
 	// argument which is the type of the current 
@@ -169,18 +169,35 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 	// the current function
 
 	//Note: this function may need extra code
-	for(auto formal: *myFormals){
+
+	// if(myRetType->getType()->isVoid()){
+	// 	std::cout<<"void function\n";
+	// }
+	//BasicType::produce(VOID)
+
+
+	//i "borrowed" ur code, sorry. I tried to reinvent it but this was just too good.
+	std::list<const DataType *> * formalTypes = 
+		new std::list<const DataType *>();
+	for (auto formal : *(this->myFormals)){
 		formal->typeAnalysis(ta);
+		TypeNode * typeNode = formal->getTypeNode();
+		const DataType * formalType = typeNode->getType();
+		formalTypes->push_back(formalType);
 	}
+	const DataType * retType = this->getRetTypeNode()->getType();
+	FnType * functionType = new FnType(formalTypes, retType);
+	ta->setCurrentFnType(functionType);
+	
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
-	//ta->nodeType(this, ErrorType::produce());
+	ta->nodeType(myID, functionType);
 	
 }
 
 void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
-
+	//should be overriden by subclass
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
 
@@ -420,28 +437,54 @@ void GreaterNode::typeAnalysis(TypeAnalysis * ta){
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta){
 	myID->typeAnalysis(ta);
-    auto subType = ta->nodeType(myID);
-    bool isFunc = true;
-    if(!subType->asFn()){
+    auto subType = ta->nodeType(myID)->asFn();
+	if(subType == nullptr){
+		std::cout<<"you did not call a function\n";
+	}else{
+		int funcArgSize = 0;
+		int callArgSize = 0;
+		auto funcTypes = subType->getFormalTypes();
+		std::list<const DataType *> * callTypes = 
+			new std::list<const DataType *>();
+		for (auto formal : *(this->myArgs)){
+			callArgSize++;
+			formal->typeAnalysis(ta);
+			auto exp = ta->nodeType(formal);
+			callTypes->push_back(exp);
+		}
+		for(auto funcArg: * funcTypes){
+			funcArgSize++;
+		}
+		//std::cout<<"Call Arg Size: "<<callArgSize<<"  | Func Arg Size: "<<funcArgSize<<std::endl;
+		if(funcArgSize == callArgSize){
+			//need to step through list, it doesnt have random access iterator
+			auto funcFront = funcTypes->begin();
+			auto callFront = callTypes->begin();
+			bool correctArgs = true;
+			for(int size = 0; size<funcArgSize; size++){
+				cout<<size<<". ";
+				if(* funcFront != * callFront){
+					std::cout<<"mismatched call argument types";
+					correctArgs = false;
+				}
+				advance(funcFront, 1);
+				advance(callFront, 1);
+				std::cout<<"\n";
+				
+			}
+			if(correctArgs == true){
+				// need to set this node to the same type as the return type
+				// tempted to just biff it and use a if-elif-else
+				// ta->nodeType(this, BasicType::produce(subType->getReturnType()))
+			}
+		}
+		else{
+			std::cout<<"call does not have correct number of arguments\n";
+		}
+		
+	}
+	ta->nodeType(this, ErrorType::produce());
 
-        isFunc = false;
-        ta->errCallee(myID->pos());
-    }
-    for (auto arg : *myArgs){
-        arg->typeAnalysis(ta);
-
-        auto subTypeArg = ta->nodeType(arg);
-        if(isFunc == true){
-            /*
-            check if arg matches formal
-            if(subTypeArg->func()){
-                ta->errArgMatch(arg->pos());
-            }
-            */
-        }
-    }
-
-    ta->nodeType(this, ErrorType::produce());
 }
 
 void RefNode::typeAnalysis(TypeAnalysis * ta){
@@ -500,8 +543,29 @@ void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta){
-
-	myExp->typeAnalysis(ta);
+	//check type of current  function\check if expression is that type
+	//std::cout<<"return\n";
+	if(myExp != nullptr){
+		myExp->typeAnalysis(ta);
+		auto subType = ta->nodeType(myExp);
+		if(ta->getCurrentFnType()->getReturnType()->validVarType()){
+			ta->nodeType(this, subType);
+			return;
+		}
+		else{
+			std::cout<<"void returning value\n";
+		}
+	}
+	else{
+		if(ta->getCurrentFnType()->getReturnType()->validVarType()){
+			std::cout<<"throw a missing return value error\n";
+		}else{
+			ta->nodeType(this, BasicType::produce(VOID));
+			return;
+		}
+	}
+	ta->nodeType(this, ErrorType::produce());
+	
 }
 
 void CallStmtNode::typeAnalysis(TypeAnalysis * ta){
